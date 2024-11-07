@@ -1,0 +1,529 @@
+from enum import Enum
+
+
+# Enums
+class BookAvailability(Enum):
+    AVAILABLE = "Available"  # The book is in stock
+    OUT_OF_STOCK = "Out of Stock"  # The book is unavailable
+    PREORDER = "Preorder"  # The book can be preordered
+
+
+class DiscountType(Enum):
+    NONE = "No Discount"  # No discount applied
+    LOYALTY = "Loyalty Discount"  # Discount for loyalty program members
+    BULK = "Bulk Discount"  # Discount for bulk purchases (5+ items)
+
+
+# EbookStore class to represent the online ebook store
+class EbookStore:
+    def __init__(self, name, date, email, website_link):
+        self.__name = name  # Store name
+        self.__date = date  # Date of establishment
+        self.__email = email  # Contact email
+        self.__website_link = website_link  # Website URL
+        self.__ebook_list = []  # List of ebooks (composition)
+
+    # Getters
+    def get_name(self):
+        return self.__name
+
+    def get_date(self):
+        return self.__date
+
+    def get_email(self):
+        return self.__email
+
+    def get_website_link(self):
+        return self.__website_link
+
+    def get_ebook_list(self):
+        return self.__ebook_list
+
+    # Setters
+    def set_name(self, name):
+        self.__name = name
+
+    def set_date(self, date):
+        self.__date = date
+
+    def set_email(self, email):
+        self.__email = email
+
+    def set_website_link(self, website_link):
+        self.__website_link = website_link
+
+    def add_ebook(self, ebook):
+        self.__ebook_list.append(ebook)
+
+    def display_store(self):
+        print(self)
+
+    def __str__(self):
+        ebooks_str = "\n".join([str(ebook) for ebook in self.__ebook_list])
+        return f"Ebook Store Name: {self.__name}\nDate: {self.__date}\nEmail: {self.__email}\nWebsite: {self.__website_link}\nEbooks:\n{ebooks_str}"
+
+
+# Ebook class to represent individual ebooks
+class Ebook:
+    def __init__(self, title, author, publication_date, genre, price, isbn, publisher, book_availability):
+        self.__title = title  # Book title
+        self.__author = author  # Author's name
+        self.__publication_date = publication_date  # Date of publication
+        self.__genre = genre  # Genre of the book
+        self.__price = price  # Price of the book
+        self.__isbn = isbn  # ISBN number
+        self.__publisher = publisher  # Publisher name
+        self.__book_availability = book_availability  # Availability (enum)
+
+    # Getters
+    def get_title(self):
+        return self.__title
+
+    def get_author(self):
+        return self.__author
+
+    def get_publication_date(self):
+        return self.__publication_date
+
+    def get_genre(self):
+        return self.__genre
+
+    def get_price(self):
+        return self.__price
+
+    def get_isbn(self):
+        return self.__isbn
+
+    def get_publisher(self):
+        return self.__publisher
+
+    def get_book_availability(self):
+        return self.__book_availability
+
+    # Setters
+    def set_title(self, title):
+        self.__title = title
+
+    def set_author(self, author):
+        self.__author = author
+
+    def set_publication_date(self, publication_date):
+        self.__publication_date = publication_date
+
+    def set_genre(self, genre):
+        self.__genre = genre
+
+    def set_price(self, price):
+        self.__price = price
+
+    def set_isbn(self, isbn):
+        self.__isbn = isbn
+
+    def set_publisher(self, publisher):
+        self.__publisher = publisher
+
+    def set_book_availability(self, book_availability):
+        self.__book_availability = book_availability
+
+    def display_ebook(self):
+        print(self)
+
+    def __str__(self):
+        return f"Title: {self.__title}, Author: {self.__author}, Publication Date: {self.__publication_date}, Genre: {self.__genre}, Price: {self.__price}, ISBN: {self.__isbn}, Publisher: {self.__publisher}, Availability: {self.__book_availability.value}"
+
+
+# ShoppingCart class to represent a customer's shopping cart
+class ShoppingCart:
+    def __init__(self, cart_id, cart_status):
+        self.__cart_id = cart_id  # Unique cart ID
+        self.__total_quantity = 0  # Total number of items in the cart
+        self.__subtotal = 0.0  # Total price before discounts
+        self.__discount_applied = DiscountType.NONE  # Discount type applied
+        self.__cart_status = cart_status  # Cart status (e.g., active, checked out)
+        self.__ebook_list = []  # List of ebooks in the cart
+
+    # Getters
+    def get_cart_id(self):
+        return self.__cart_id
+
+    def get_total_quantity(self):
+        return self.__total_quantity
+
+    def get_subtotal(self):
+        return self.__subtotal
+
+    def get_discount_applied(self):
+        return self.__discount_applied
+
+    def get_cart_status(self):
+        return self.__cart_status
+
+    def get_ebook_list(self):
+        return self.__ebook_list
+
+    # Setters
+    def set_cart_id(self, cart_id):
+        self.__cart_id = cart_id
+
+    def set_total_quantity(self, total_quantity):
+        self.__total_quantity = total_quantity
+
+    def set_subtotal(self, subtotal):
+        self.__subtotal = subtotal
+
+    def set_discount_applied(self, discount_applied):
+        self.__discount_applied = discount_applied
+
+    def set_cart_status(self, cart_status):
+        self.__cart_status = cart_status
+
+    def add_book(self, ebook):
+        self.__ebook_list.append(ebook)
+        self.__total_quantity += 1
+        self.__subtotal += ebook.get_price()  # Using getter for price
+
+    def remove_book(self, ebook_title):
+        for ebook in self.__ebook_list:
+            if ebook.get_title() == ebook_title:  # Using getter for title
+                self.__ebook_list.remove(ebook)
+                self.__total_quantity -= 1
+                self.__subtotal -= ebook.get_price()  # Using getter for price
+                break
+
+    def search_book(self, ebook_title):
+        for ebook in self.__ebook_list:
+            if ebook.get_title() == ebook_title:  # Using getter for title
+                print("Ebook found in cart:")
+                print(ebook)
+                return
+        print("Ebook not found in cart.")
+
+    def update_quantities(self):
+        self.__total_quantity = len(self.__ebook_list)
+
+    def calculate_discount(self, customer_is_loyalty_member):
+        if self.__total_quantity >= 5:  # Bulk discount condition
+            self.__discount_applied = DiscountType.BULK
+            self.__subtotal *= 0.8  # Apply 20% discount
+        elif customer_is_loyalty_member:  # Loyalty discount condition
+            self.__discount_applied = DiscountType.LOYALTY
+            self.__subtotal *= 0.9  # Apply 10% discount
+        else:
+            self.__discount_applied = DiscountType.NONE  # No discount
+
+    def display_shopping_cart(self):
+        print(self)
+
+    def __str__(self):
+        ebooks_str = "\n".join([str(ebook) for ebook in self.__ebook_list])
+        return f"Cart ID: {self.__cart_id}, Total Quantity: {self.__total_quantity}, Subtotal: {self.__subtotal}, Discount: {self.__discount_applied.value}, Status: {self.__cart_status}\nEbooks in Cart:\n{ebooks_str}"
+
+
+# Customer class to represent a customer
+class Customer:
+    def __init__(self, name, contact_info, account_id, membership_level, loyalty_points, address):
+        self.__name = name  # Customer name
+        self.__contact_info = contact_info  # Contact information
+        self.__account_id = account_id  # Account ID
+        self.__membership_level = membership_level  # Membership level (e.g., Gold, Silver)
+        self.__loyalty_points = loyalty_points  # Loyalty points
+        self.__address = address  # Address
+        self.__order_list = []  # List of orders (composition)
+
+    # Getters
+    def get_name(self):
+        return self.__name
+
+    def get_contact_info(self):
+        return self.__contact_info
+
+    def get_account_id(self):
+        return self.__account_id
+
+    def get_membership_level(self):
+        return self.__membership_level
+
+    def get_loyalty_points(self):
+        return self.__loyalty_points
+
+    def get_address(self):
+        return self.__address
+
+    def get_order_list(self):
+        return self.__order_list
+
+    # Setters
+    def set_name(self, name):
+        self.__name = name
+
+    def set_contact_info(self, contact_info):
+        self.__contact_info = contact_info
+
+    def set_account_id(self, account_id):
+        self.__account_id = account_id
+
+    def set_membership_level(self, membership_level):
+        self.__membership_level = membership_level
+
+    def set_loyalty_points(self, loyalty_points):
+        self.__loyalty_points = loyalty_points
+
+    def set_address(self, address):
+        self.__address = address
+
+    def add_order(self, order):
+        self.__order_list.append(order)
+
+    def display_customer(self):
+        print(self)
+
+    def __str__(self):
+        orders_str = "\n".join([str(order) for order in self.__order_list])
+        return f"Name: {self.__name}, Contact: {self.__contact_info}, Account ID: {self.__account_id}, Membership: {self.__membership_level}, Loyalty Points: {self.__loyalty_points}, Address: {self.__address}\nOrders:\n{orders_str}"
+
+
+# Order class to represent an order
+class Order:
+    def __init__(self, order_id, order_date, delivery_email, shopping_cart):
+        self.__order_id = order_id  # Unique order ID
+        self.__order_date = order_date  # Date of the order
+        self.__delivery_email = delivery_email  # Delivery email address
+        self.__shopping_cart = shopping_cart  # One-to-one relationship with ShoppingCart
+        self.__total_price = 0  # Total price after discounts
+        self.__order_status = "Pending"  # Order status (e.g., pending, completed)
+        self.__discount_type = DiscountType.NONE  # Discount applied to the order
+
+    # Getters
+    def get_order_id(self):
+        return self.__order_id
+
+    def get_order_date(self):
+        return self.__order_date
+
+    def get_delivery_email(self):
+        return self.__delivery_email
+
+    def get_shopping_cart(self):
+        return self.__shopping_cart
+
+    def get_total_price(self):
+        return self.__total_price
+
+    def get_order_status(self):
+        return self.__order_status
+
+    def get_discount_type(self):
+        return self.__discount_type
+
+    # Setters
+    def set_order_id(self, order_id):
+        self.__order_id = order_id
+
+    def set_order_date(self, order_date):
+        self.__order_date = order_date
+
+    def set_delivery_email(self, delivery_email):
+        self.__delivery_email = delivery_email
+
+    def set_shopping_cart(self, shopping_cart):
+        self.__shopping_cart = shopping_cart
+
+    def set_total_price(self, total_price):
+        self.__total_price = total_price
+
+    def set_order_status(self, order_status):
+        self.__order_status = order_status
+
+    def set_discount_type(self, discount_type):
+        self.__discount_type = discount_type
+
+    def calculate_discount(self, customer_is_loyalty_member):
+        self.__total_price = self.__shopping_cart.get_subtotal()  # Base price from shopping cart
+        if self.__shopping_cart.get_total_quantity() >= 5:  # Bulk discount condition
+            self.__discount_type = DiscountType.BULK
+            self.__total_price *= 0.8  # Apply 20% discount
+        elif customer_is_loyalty_member:  # Loyalty discount condition
+            self.__discount_type = DiscountType.LOYALTY
+            self.__total_price *= 0.9  # Apply 10% discount
+        else:
+            self.__discount_type = DiscountType.NONE  # No discount
+
+    def display_order(self):
+        print(self)
+
+    def __str__(self):
+        return f"Order ID: {self.__order_id}, Order Date: {self.__order_date}, Delivery Email: {self.__delivery_email}, Status: {self.__order_status}, Total Price: {self.__total_price}, Discount: {self.__discount_type.value}\nShopping Cart:\n{self.__shopping_cart}"
+
+
+# Invoice class to represent the invoice associated with an order
+class Invoice:
+    def __init__(self, invoice_id, item_price, discount, total_amount, vat, invoice_date, billing_address):
+        self.__invoice_id = invoice_id  # Unique invoice ID
+        self.__item_price = item_price  # Price of individual items
+        self.__discount = discount  # Discount applied
+        self.__total_amount = total_amount  # Total amount payable (after discounts)
+        self.__vat = vat  # Value-added tax (VAT)
+        self.__invoice_date = invoice_date  # Date of the invoice
+        self.__billing_address = billing_address  # Customer's billing address
+
+    # Getters
+    def get_invoice_id(self):
+        return self.__invoice_id
+
+    def get_item_price(self):
+        return self.__item_price
+
+    def get_discount(self):
+        return self.__discount
+
+    def get_total_amount(self):
+        return self.__total_amount
+
+    def get_vat(self):
+        return self.__vat
+
+    def get_invoice_date(self):
+        return self.__invoice_date
+
+    def get_billing_address(self):
+        return self.__billing_address
+
+    # Setters
+    def set_invoice_id(self, invoice_id):
+        self.__invoice_id = invoice_id
+
+    def set_item_price(self, item_price):
+        self.__item_price = item_price
+
+    def set_discount(self, discount):
+        self.__discount = discount
+
+    def set_total_amount(self, total_amount):
+        self.__total_amount = total_amount
+
+    def set_vat(self, vat):
+        self.__vat = vat
+
+    def set_invoice_date(self, invoice_date):
+        self.__invoice_date = invoice_date
+
+    def set_billing_address(self, billing_address):
+        self.__billing_address = billing_address
+
+    def display_invoice(self):
+        print(self)
+
+    def __str__(self):
+        return f"Invoice ID: {self.__invoice_id}, Item Price: {self.__item_price}, Discount: {self.__discount}, Total Amount: {self.__total_amount}, VAT: {self.__vat}, Invoice Date: {self.__invoice_date}, Billing Address: {self.__billing_address}"
+
+
+# Payment class to represent the payment made for an order
+class Payment:
+    def __init__(self, payment_id, payment_method, amount, payment_status, transaction_date):
+        self.__payment_id = payment_id  # Unique payment ID
+        self.__payment_method = payment_method  # Method of payment (e.g., CreditCard, DebitCard)
+        self.__amount = amount  # Total amount paid
+        self.__payment_status = payment_status  # Payment status (e.g., completed, pending)
+        self.__transaction_date = transaction_date  # Date of the payment transaction
+
+    # Getters
+    def get_payment_id(self):
+        return self.__payment_id
+
+    def get_payment_method(self):
+        return self.__payment_method
+
+    def get_amount(self):
+        return self.__amount
+
+    def get_payment_status(self):
+        return self.__payment_status
+
+    def get_transaction_date(self):
+        return self.__transaction_date
+
+    # Setters
+    def set_payment_id(self, payment_id):
+        self.__payment_id = payment_id
+
+    def set_payment_method(self, payment_method):
+        self.__payment_method = payment_method
+
+    def set_amount(self, amount):
+        self.__amount = amount
+
+    def set_payment_status(self, payment_status):
+        self.__payment_status = payment_status
+
+    def set_transaction_date(self, transaction_date):
+        self.__transaction_date = transaction_date
+
+    def display_payment(self):
+        print(self)
+
+    def __str__(self):
+        return f"Payment ID: {self.__payment_id}, Method: {self.__payment_method}, Amount: {self.__amount}, Status: {self.__payment_status}, Date: {self.__transaction_date}"
+
+
+# CreditCard subclass of Payment
+class CreditCard(Payment):
+    def __init__(self, payment_id, amount, payment_status, transaction_date, card_number, expiry_date, cvv):
+        super().__init__(payment_id, "CreditCard", amount, payment_status, transaction_date)
+        self.__card_number = card_number  # Credit card number
+        self.__expiry_date = expiry_date  # Expiration date of the card
+        self.__cvv = cvv  # CVV code of the card
+
+    # Getters
+    def get_card_number(self):
+        return self.__card_number
+
+    def get_expiry_date(self):
+        return self.__expiry_date
+
+    def get_cvv(self):
+        return self.__cvv
+
+    # Setters
+    def set_card_number(self, card_number):
+        self.__card_number = card_number
+
+    def set_expiry_date(self, expiry_date):
+        self.__expiry_date = expiry_date
+
+    def set_cvv(self, cvv):
+        self.__cvv = cvv
+
+    def __str__(self):
+        return f"{super().__str__()}, Card Number: {self.__card_number}, Expiry: {self.__expiry_date}, CVV: {self.__cvv}"
+
+
+# DebitCard subclass of Payment
+class DebitCard(Payment):
+    def __init__(self, payment_id, amount, payment_status, transaction_date, card_number, expiry_date, cvv):
+        super().__init__(payment_id, "DebitCard", amount, payment_status, transaction_date)
+        self.__card_number = card_number  # Debit card number
+        self.__expiry_date = expiry_date  # Expiration date of the card
+        self.__cvv = cvv  # CVV code of the card
+
+    # Getters
+    def get_card_number(self):
+        return self.__card_number
+
+    def get_expiry_date(self):
+        return self.__expiry_date
+
+    def get_cvv(self):
+        return self.__cvv
+
+    # Setters
+    def set_card_number(self, card_number):
+        self.__card_number = card_number
+
+    def set_expiry_date(self, expiry_date):
+        self.__expiry_date = expiry_date
+
+    def set_cvv(self, cvv):
+        self.__cvv = cvv
+
+    def __str__(self):
+        return f"{super().__str__()}, Card Number: {self.__card_number}, Expiry: {self.__expiry_date}, CVV: {self.__cvv}"
