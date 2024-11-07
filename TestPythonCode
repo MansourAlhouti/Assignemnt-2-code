@@ -1,0 +1,108 @@
+from PythonCode import *
+
+# Test 1: Single Ebook Purchase
+ebook_store1 = EbookStore("Test E-Book Store 1", "2024-11-01", "test1@example.com", "www.mansourbook.com")
+ebook1 = Ebook("Atomic Habits", "James Clear", "2018", "Self-Help", 11.99, "9780735211292", "Penguin Random House", BookAvailability.AVAILABLE)
+ebook_store1.add_ebook(ebook1)
+
+shopping_cart1 = ShoppingCart(cart_id="CART001", cart_status="Active")
+shopping_cart1.add_book(ebook1)
+
+customer1 = Customer("Mansour", "mansouralhouti9@gmail.com", "CUST001", "Silver", 100, "Khalifa City A, Abu Dhabi")
+order1 = Order(order_id="ORDER001", order_date="2024-11-07", delivery_email="mansouralhouti9@gmail.com", shopping_cart=shopping_cart1)
+order1.calculate_discount(customer_is_loyalty_member=False)
+
+invoice1 = Invoice(invoice_id="INV001", item_price=shopping_cart1.get_subtotal(),
+                   discount=order1.get_discount_type().value,
+                   total_amount=order1.get_total_price(), vat=1.5, invoice_date="2024-11-07",
+                   billing_address=customer1.get_address())
+
+credit_card_payment1 = CreditCard(payment_id="PAY001", amount=invoice1.get_total_amount(), payment_status="Completed",
+                                   transaction_date="2024-11-07", card_number="4111111111111111", expiry_date="12/25", cvv="123")
+
+print("\nTest 1: Single Ebook Purchase")
+print(ebook_store1)
+print(shopping_cart1)
+print(customer1)
+print(order1)
+print(invoice1)
+print(credit_card_payment1)
+
+# Test 2: Multiple Ebook Purchases
+ebook_store2 = EbookStore("Test E-Book Store 2", "2024-11-01", "test2@example.com", "www.mansourbook.com")
+ebook2 = Ebook("The 48 Laws of Power", "Robert Greene", "1998", "Self-Help", 15.99, "9780140280197", "Penguin Books", BookAvailability.AVAILABLE)
+ebook3 = Ebook("Rich Dad Poor Dad", "Robert Kiyosaki", "1997", "Personal Finance", 9.99, "9781612680194", "Plata Publishing", BookAvailability.AVAILABLE)
+ebook_store2.add_ebook(ebook2)
+ebook_store2.add_ebook(ebook3)
+
+shopping_cart2 = ShoppingCart(cart_id="CART002", cart_status="Active")
+shopping_cart2.add_book(ebook2)
+shopping_cart2.add_book(ebook3)
+
+customer2 = Customer("Mansour", "mansouralhouti9@gmail.com", "CUST002", "Gold", 200, "Khalifa City A, Abu Dhabi")
+order2 = Order(order_id="ORDER002", order_date="2024-11-07", delivery_email="mansouralhouti9@gmail.com", shopping_cart=shopping_cart2)
+order2.calculate_discount(customer_is_loyalty_member=True)  # Loyalty member discount
+
+invoice2 = Invoice(invoice_id="INV002", item_price=shopping_cart2.get_subtotal(),
+                   discount=order2.get_discount_type().value,
+                   total_amount=order2.get_total_price(), vat=2.0, invoice_date="2024-11-07",
+                   billing_address=customer2.get_address())
+
+debit_card_payment2 = DebitCard(payment_id="PAY002", amount=invoice2.get_total_amount(), payment_status="Pending",
+                                 transaction_date="2024-11-07", card_number="5111111111111118", expiry_date="11/24", cvv="456")
+
+print("\nTest 2: Multiple Ebook Purchases")
+print(ebook_store2)
+print(shopping_cart2)
+print(customer2)
+print(order2)
+print(invoice2)
+print(debit_card_payment2)
+
+# Test 3: Empty Shopping Cart Checkout
+shopping_cart3 = ShoppingCart(cart_id="CART003", cart_status="Active")
+customer3 = Customer("Mansour", "mansouralhouti9@gmail.com", "CUST003", "Bronze", 50, "Khalifa City A, Abu Dhabi")
+order3 = Order(order_id="ORDER003", order_date="2024-11-07", delivery_email="mansouralhouti9@gmail.com", shopping_cart=shopping_cart3)
+order3.calculate_discount(customer_is_loyalty_member=False)  # No ebooks in cart
+
+invoice3 = Invoice(invoice_id="INV003", item_price=shopping_cart3.get_subtotal(),
+                   discount=order3.get_discount_type().value,
+                   total_amount=order3.get_total_price(), vat=0.0, invoice_date="2024-11-07",
+                   billing_address=customer3.get_address())
+
+print("\nTest 3: Empty Shopping Cart Checkout")
+print(ebook_store2)  # Note: You can replace this with a new store instance if needed
+print(shopping_cart3)
+print(customer3)
+print(order3)
+print(invoice3)
+
+# Test 4: Adding and Removing Books from Shopping Cart
+ebook_store4 = EbookStore("Test E-Book Store 4", "2024-11-01", "test4@example.com", "www.mansourbook.com")
+ebook4 = Ebook("The Power of Now", "Eckhart Tolle", "1997", "Self-Help", 14.99, "9781577314806", "New World Library", BookAvailability.AVAILABLE)
+ebook5 = Ebook("Daring Greatly", "Brené Brown", "2012", "Self-Help", 12.99, "9781592407330", "Gotham Books", BookAvailability.AVAILABLE)
+ebook_store4.add_ebook(ebook4)
+ebook_store4.add_ebook(ebook5)
+
+shopping_cart4 = ShoppingCart(cart_id="CART004", cart_status="Active")
+shopping_cart4.add_book(ebook4)  # Add first ebook
+shopping_cart4.add_book(ebook5)  # Add second ebook
+
+# Remove the first ebook from the cart
+shopping_cart4.remove_book(ebook4.get_title())  # Using the getter to access the title
+
+customer4 = Customer("Mansour", "mansouralhouti9@gmail.com", "CUST004", "Gold", 250, "Khalifa City A, Abu Dhabi")
+order4 = Order(order_id="ORDER004", order_date="2024-11-07", delivery_email="mansouralhouti9@gmail.com", shopping_cart=shopping_cart4)
+order4.calculate_discount(customer_is_loyalty_member=True)
+
+invoice4 = Invoice(invoice_id="INV004", item_price=shopping_cart4.get_subtotal(),
+                   discount=order4.get_discount_type().value,
+                   total_amount=order4.get_total_price(), vat=1.0, invoice_date="2024-11-07",
+                   billing_address=customer4.get_address())
+
+print("\nTest 4: Adding and Removing Books from Shopping Cart")
+print(ebook_store4)
+print(shopping_cart4)
+print(customer4)
+print(order4)
+print(invoice4)
